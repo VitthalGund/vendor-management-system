@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Vendor
-from .serializers import VendorSerializer
+from .serializers import VendorSerializer, VendorPerformanceSerializer
 
 
 @api_view(["GET", "POST"])
@@ -41,3 +41,15 @@ def vendor_detail(request, vendor_id):
     elif request.method == "DELETE":
         vendor.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["GET"])
+def vendor_performance(request, vendor_id):
+    try:
+        vendor = Vendor.objects.get(pk=vendor_id)
+    except Vendor.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    vendor.calculate_performance_metrics()  # Ensure performance metrics are up-to-date
+    serializer = VendorPerformanceSerializer(vendor)
+    return Response(serializer.data)
