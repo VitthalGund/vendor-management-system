@@ -22,4 +22,5 @@ from vendor_management import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/vendors/", include("vendor_management.urls")),
+    path("api/purchase_orders/", include("purchase_order_tracking.urls")),
 ]
