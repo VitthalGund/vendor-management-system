@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
     "vendor_management",
-    "purchase_order_tracking",
 ]
 
 MIDDLEWARE = [
