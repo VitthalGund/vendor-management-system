@@ -59,30 +59,233 @@ Vendor Management System is a comprehensive web application developed using Djan
 
 6. **Access the API endpoints** at `http://localhost:8000/api/`.
 
-### API Documentation
+### Vendor Management System API Documentation 📝
 
-- **Vendor Management**:
+Welcome to the API documentation for the Vendor Management System. This documentation provides detailed information about each API endpoint, including the type of request, data passed, and the expected response.
 
-  - `POST /api/vendors/`: Create a new vendor.
-  - `GET /api/vendors/`: List all vendors.
-  - `GET /api/vendors/{vendor_id}/`: Retrieve a specific vendor's details.
-  - `PUT /api/vendors/{vendor_id}/`: Update a vendor's details.
-  - `DELETE /api/vendors/{vendor_id}/`: Delete a vendor.
+## Base URL
 
-- **Purchase Order Tracking**:
+All API endpoints are relative to the base URL:
 
-  - `POST /api/purchase_orders/`: Create a purchase order.
-  - `GET /api/purchase_orders/`: List all purchase orders with an option to filter by vendor.
-  - `GET /api/purchase_orders/{po_id}/`: Retrieve details of a specific purchase order.
-  - `PUT /api/purchase_orders/{po_id}/`: Update a purchase order.
-  - `DELETE /api/purchase_orders/{po_id}/`: Delete a purchase order.
+```
+http://localhost:8000/api/
+```
 
-- **Vendor Performance Evaluation**:
+## Authentication
 
-  - `GET /api/vendors/{vendor_id}/performance`: Retrieve a vendor's performance metrics.
+The API endpoints require token-based authentication. To authenticate, obtain a token using the following endpoint:
 
-- **Token Authentication**:
-  - Endpoints for token authentication.
+- **Token Obtainment**: `POST /api/token/`
+
+### Request
+
+```json
+{
+  "username": "your_username",
+  "password": "your_password"
+}
+```
+
+### Response
+
+```json
+{
+  "access": "your_access_token",
+  "refresh": "your_refresh_token"
+}
+```
+
+Include the access token in the Authorization header for subsequent requests.
+
+## Endpoints
+
+### Vendor Management
+
+#### Create a New Vendor
+
+- **Request Type**: `POST`
+- **Endpoint**: `/api/vendors/`
+- **Data Passed**:
+
+```json
+{
+  "name": "Vendor Name",
+  "contact_details": "Contact Details",
+  "address": "Vendor Address",
+  "vendor_code": "Unique Vendor Code"
+}
+```
+
+- **Return Data**: 
+
+```json
+{
+  "id": 1,
+  "name": "Vendor Name",
+  "contact_details": "Contact Details",
+  "address": "Vendor Address",
+  "vendor_code": "Unique Vendor Code",
+  "on_time_delivery_rate": 0.0,
+  "quality_rating_avg": 0.0,
+  "average_response_time": 0.0,
+  "fulfillment_rate": 0.0
+}
+```
+
+#### List All Vendors
+
+- **Request Type**: `GET`
+- **Endpoint**: `/api/vendors/`
+- **Return Data**:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Vendor Name",
+    "contact_details": "Contact Details",
+    "address": "Vendor Address",
+    "vendor_code": "Unique Vendor Code",
+    "on_time_delivery_rate": 0.0,
+    "quality_rating_avg": 0.0,
+    "average_response_time": 0.0,
+    "fulfillment_rate": 0.0
+  },
+  { ... }
+]
+```
+
+#### Retrieve a Specific Vendor
+
+- **Request Type**: `GET`
+- **Endpoint**: `/api/vendors/{vendor_id}/`
+- **Return Data**:
+
+```json
+{
+  "id": 1,
+  "name": "Vendor Name",
+  "contact_details": "Contact Details",
+  "address": "Vendor Address",
+  "vendor_code": "Unique Vendor Code",
+  "on_time_delivery_rate": 0.0,
+  "quality_rating_avg": 0.0,
+  "average_response_time": 0.0,
+  "fulfillment_rate": 0.0
+}
+```
+
+#### Update a Vendor
+
+- **Request Type**: `PUT`
+- **Endpoint**: `/api/vendors/{vendor_id}/`
+- **Data Passed**:
+
+```json
+{
+  "name": "Updated Vendor Name",
+  "contact_details": "Updated Contact Details",
+  "address": "Updated Vendor Address",
+  "vendor_code": "Updated Unique Vendor Code"
+}
+```
+
+- **Return Data**: Same as Retrieve a Specific Vendor
+
+#### Delete a Vendor
+
+- **Request Type**: `DELETE`
+- **Endpoint**: `/api/vendors/{vendor_id}/`
+- **Return Data**: HTTP 204 No Content
+
+### Purchase Order Tracking
+
+#### Create a New Purchase Order
+
+- **Request Type**: `POST`
+- **Endpoint**: `/api/purchase_orders/`
+- **Data Passed**:
+
+```json
+{
+  "po_number": "PO-001",
+  "vendor": 1,
+  "order_date": "2024-04-30T12:00:00Z",
+  "delivery_date": "2024-05-10T12:00:00Z",
+  "items": [
+    {
+      "name": "Item 1",
+      "quantity": 10,
+      "price": 50.00
+    },
+    { ... }
+  ]
+}
+```
+
+- **Return Data**:
+
+```json
+{
+  "id": 1,
+  "po_number": "PO-001",
+  "vendor": 1,
+  "order_date": "2024-04-30T12:00:00Z",
+  "delivery_date": "2024-05-10T12:00:00Z",
+  "items": [
+    {
+      "name": "Item 1",
+      "quantity": 10,
+      "price": 50.00
+    },
+    { ... }
+  ],
+  "status": "pending"
+}
+```
+
+#### List All Purchase Orders
+
+- **Request Type**: `GET`
+- **Endpoint**: `/api/purchase_orders/`
+- **Return Data**: Same as Create a New Purchase Order
+
+#### Retrieve a Specific Purchase Order
+
+- **Request Type**: `GET`
+- **Endpoint**: `/api/purchase_orders/{po_id}/`
+- **Return Data**: Same as Create a New Purchase Order
+
+#### Update a Purchase Order
+
+- **Request Type**: `PUT`
+- **Endpoint**: `/api/purchase_orders/{po_id}/`
+- **Data Passed**: Same as Create a New Purchase Order
+- **Return Data**: Same as Create a New Purchase Order
+
+#### Delete a Purchase Order
+
+- **Request Type**: `DELETE`
+- **Endpoint**: `/api/purchase_orders/{po_id}/`
+- **Return Data**: HTTP 204 No Content
+
+### Vendor Performance Evaluation
+
+#### Retrieve Vendor Performance Metrics
+
+- **Request Type**: `GET`
+- **Endpoint**: `/api/vendors/{vendor_id}/performance/`
+- **Return Data**:
+
+```json
+{
+  "on_time_delivery_rate": 95.0,
+  "quality_rating_avg": 4.5,
+  "average_response_time": 3.5,
+  "fulfillment_rate": 98.0
+}
+```
+ ##### Note: This a brief introduction of all listed api's please checkout ```urls.py``` file in particular app for more.
 
 ## 🤝 Contributing
 
