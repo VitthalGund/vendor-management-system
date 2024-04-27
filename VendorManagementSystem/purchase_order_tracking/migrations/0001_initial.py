@@ -9,25 +9,39 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('vendor_management', '0001_initial'),
+        ("vendor_management", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PurchaseOrder',
+            name="PurchaseOrder",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('po_number', models.CharField(max_length=100, unique=True)),
-                ('order_date', models.DateTimeField(auto_now_add=True)),
-                ('delivery_date', models.DateTimeField(blank=True, null=True)),
-                ('actual_delivery_date', models.DateTimeField(blank=True, null=True)),
-                ('items', models.JSONField()),
-                ('quantity', models.IntegerField(default=0)),
-                ('status', models.CharField(default='pending', max_length=20)),
-                ('quality_rating', models.FloatField(blank=True, null=True)),
-                ('issue_date', models.DateTimeField(auto_now_add=True)),
-                ('acknowledgment_date', models.DateTimeField(blank=True, null=True)),
-                ('vendor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vendor_management.vendor')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("po_number", models.CharField(max_length=100, unique=True)),
+                ("order_date", models.DateTimeField(auto_now_add=True)),
+                ("delivery_date", models.DateTimeField(blank=True, null=True)),
+                ("actual_delivery_date", models.DateTimeField(blank=True, null=True)),
+                ("items", models.TextField()),
+                ("quantity", models.IntegerField(default=0)),
+                ("status", models.CharField(default="pending", max_length=20)),
+                ("quality_rating", models.FloatField(blank=True, null=True)),
+                ("issue_date", models.DateTimeField(auto_now_add=True)),
+                ("acknowledgment_date", models.DateTimeField(blank=True, null=True)),
+                (
+                    "vendor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="vendor_management.vendor",
+                    ),
+                ),
             ],
         ),
     ]

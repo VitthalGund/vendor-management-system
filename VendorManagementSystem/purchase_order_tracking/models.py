@@ -18,11 +18,9 @@ class PurchaseOrder(models.Model):
     acknowledgment_date = models.DateTimeField(null=True, blank=True)
 
     def set_items(self, items):
-        # Convert items dictionary to JSON string before saving to the database
         self.items = json.dumps(items)
 
     def get_items(self):
-        # Convert JSON string back to dictionary when retrieving from the database
         return json.loads(self.items)
 
     def __str__(self):
