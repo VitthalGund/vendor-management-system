@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import Count, Avg, F, ExpressionWrapper, FloatField
+from .models import HistoricalPerformance
+from django.utils import timezone
 
 
 class Vendor(models.Model):
@@ -60,50 +62,18 @@ class Vendor(models.Model):
         else:
             self.fulfillment_rate = 0.0
 
+        # Save the updated performance metrics to the Vendor model
         self.save()
-        # Calculate on-time delivery rate
-        completed_orders = self.purchaseorder_set.filter(status="completed")
-        total_completed_orders = completed_orders.count()
-        if total_completed_orders > 0:
-            on_time_delivery_count = completed_orders.filter(
-                delivery_date__lte=F("actual_delivery_date")
-            ).count()
-            self.on_time_delivery_rate = (
-                on_time_delivery_count / total_completed_orders
-            ) * 100
 
-        # Calculate quality rating average
-        self.quality_rating_avg = (
-            self.purchaseorder_set.filter(quality_rating__isnull=False).aggregate(
-                avg_quality=Avg("quality_rating")
-            )["avg_quality"]
-            or 0.0
+        # Create instance of HistoricalPerformance model to store historical data
+        HistoricalPerformance.objects.create(
+            vendor=self,
+            date=timezone.now(),
+            on_time_delivery_rate=self.on_time_delivery_rate,
+            quality_rating_avg=self.quality_rating_avg,
+            average_response_time=self.average_response_time,
+            fulfillment_rate=self.fulfillment_rate,
         )
-
-        # Calculate average response time
-        response_times = (
-            self.purchaseorder_set.filter(acknowledgment_date__isnull=False)
-            .annotate(
-                response_time=ExpressionWrapper(
-                    F("acknowledgment_date") - F("issue_date"),
-                    output_field=FloatField(),
-                )
-            )
-            .aggregate(avg_response=Avg("response_time"))["avg_response"]
-        )
-        self.average_response_time = (
-            response_times.total_seconds() if response_times else 0.0
-        )
-
-        # Calculate fulfillment rate
-        total_orders = self.purchaseorder_set.count()
-        if total_orders > 0:
-            fulfilled_orders = self.purchaseorder_set.filter(
-                status="completed", issues__isnull=True
-            ).count()
-            self.fulfillment_rate = (fulfilled_orders / total_orders) * 100
-
-        self.save()
 
     def __str__(self):
         return self.name

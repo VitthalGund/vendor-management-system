@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from .models import HistoricalPerformance
 from .models import Vendor
 
 
@@ -19,3 +20,9 @@ class VendorPerformanceSerializer(serializers.ModelSerializer):
             "average_response_time",
             "fulfillment_rate",
         )
+
+
+class HistoricalPerformanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HistoricalPerformance
+        fields = "__all__"
