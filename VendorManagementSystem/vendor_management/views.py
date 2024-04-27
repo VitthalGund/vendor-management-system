@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import Vendor, HistoricalPerformance
 from .serializers import (
@@ -7,9 +7,11 @@ from .serializers import (
     VendorPerformanceSerializer,
     HistoricalPerformanceSerializer,
 )
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
 def vendor_list(request):
     if request.method == "GET":
         vendors = Vendor.objects.all()
@@ -25,6 +27,7 @@ def vendor_list(request):
 
 
 @api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
 def vendor_detail(request, vendor_id):
     try:
         vendor = Vendor.objects.get(pk=vendor_id)
