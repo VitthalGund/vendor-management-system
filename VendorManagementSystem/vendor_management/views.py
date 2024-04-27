@@ -7,10 +7,6 @@ from .serializers import (
     VendorPerformanceSerializer,
     HistoricalPerformanceSerializer,
 )
-from django.utils import timezone
-from django.shortcuts import get_object_or_404
-from purchase_order_tracking.models import PurchaseOrder
-from purchase_order_tracking.serializers import PurchaseOrderSerializer
 
 
 @api_view(["GET", "POST"])
@@ -75,24 +71,3 @@ def vendor_historical_performance(request, vendor_id):
     )
     serializer = HistoricalPerformanceSerializer(historical_data, many=True)
     return Response(serializer.data)
-
-
-@api_view(["POST"])
-def acknowledge_purchase_order(request, po_id):
-    # Retrieve the purchase order
-    purchase_order = get_object_or_404(PurchaseOrder, id=po_id)
-
-    # Check if the vendor is authenticated and authorized to acknowledge the purchase order
-    # Implement authentication logic here
-
-    # Update acknowledgment date to current timestamp
-    purchase_order.acknowledgment_date = timezone.now()
-    purchase_order.save()
-
-    # Trigger recalculation of average response time for the vendor
-    purchase_order.vendor.calculate_performance_metrics()
-
-    # Serialize the updated purchase order
-    serializer = PurchaseOrderSerializer(purchase_order)
-
-    return Response(serializer.data, status=status.HTTP_200_OK)

@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import PurchaseOrder
 from .serializers import PurchaseOrderSerializer
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 
 @api_view(["GET", "POST"])
@@ -41,3 +43,27 @@ def purchase_order_detail(request, po_id):
     elif request.method == "DELETE":
         purchase_order.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+def acknowledge_purchase_order(request, po_id):
+    # Retrieve the purchase order object
+    purchase_order = get_object_or_404(PurchaseOrder, pk=po_id)
+
+    # Check if the purchase order has already been acknowledged
+    if purchase_order.acknowledgment_date is not None:
+        return Response(
+            {"error": "Purchase order has already been acknowledged."}, status=400
+        )
+
+    # Update the acknowledgment date
+    purchase_order.acknowledgment_date = timezone.now()
+    purchase_order.save()
+
+    # Trigger recalculation of average response time for the vendor
+    vendor = purchase_order.vendor
+    vendor.calculate_performance_metrics()
+
+    return Response(
+        {"message": "Purchase order acknowledged successfully."}, status=200
+    )
